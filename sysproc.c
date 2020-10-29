@@ -23,7 +23,9 @@ sys_exit(void)
 int
 sys_wait(void)
 {
-  return wait();
+  int *status;
+  argptr(0, (void*)&status, 4);
+  return wait(status);
 }
 
 int
@@ -88,4 +90,28 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+
+int sys_exitS(void)
+{
+  int status;
+  argint(0, &status);
+  exitS(status);
+  return 0;
+
+}
+
+int sys_waitpid(void)
+{
+  int pid;
+  int *status;
+  int options;
+  
+  argint(0, &pid);
+  argptr(1, (void*)&status, 4);
+  argint(2, &options);
+  
+ return waitpid(pid, status, options);
+ 
 }

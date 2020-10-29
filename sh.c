@@ -13,6 +13,8 @@
 
 #define MAXARGS 10
 
+int exit_status;
+
 struct cmd {
   int type;
 };
@@ -93,7 +95,7 @@ runcmd(struct cmd *cmd)
     lcmd = (struct listcmd*)cmd;
     if(fork1() == 0)
       runcmd(lcmd->left);
-    wait();
+    wait(&exit_status);
     runcmd(lcmd->right);
     break;
 
@@ -117,8 +119,8 @@ runcmd(struct cmd *cmd)
     }
     close(p[0]);
     close(p[1]);
-    wait();
-    wait();
+    wait(&exit_status);
+    wait(&exit_status);
     break;
 
   case BACK:
@@ -166,7 +168,7 @@ main(void)
     }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
-    wait();
+    wait(&exit_status);
   }
   exit();
 }
